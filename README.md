@@ -1,8 +1,17 @@
 # kLDM
 kLDM is designed to infer multiple association networks based on variation of environmental factors. [![language](https://img.shields.io/badge/language-c++-blue.svg)]()
 
-不同环境条件下的关联网络分析
-## Split process
-首先按照环境因素对样本进行分割, 每次将数据进行2-GMM, 递归进行直到cluster中的样本数少于某个阈值
-## Merge process
-对split产生的叶子节点进行关联网络分析, 根据估计出的参数进行节点合并
+![](https://github.com/tinglab/kLDM/blob/master/pictures/model_explain.jpg)
+
+## Pre-requisites
+- c++ 11
+- openmp
+- make
+- lapack, blas library
+
+## Linux
+### Install
+...
+cd ./src
+make
+...
