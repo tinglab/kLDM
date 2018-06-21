@@ -38,12 +38,23 @@ cd ./datasets/crc-data/
 ![](https://github.com/tinglab/kLDM/blob/master/pictures/result_example.png)
 ### Output
 kLDM estimates EF conditions and association networks under every EF condition via a split-merge algorithm:
-
+![](https://github.com/tinglab/kLDM/blob/master/pictures/sm-process.jpg)
 * Output Explaination
 
 File Name | Content
 ----------|--------
+Cluster_Number | the number of estimated EF conditions are saved into the file.
+Sample_Index_k (e.g. k=1, k=2) | indexes of samples belongs to the cluster k in original 'otu_table' (the minimum index is 0).
+Sample_Num_k | the number of samples of the cluster k.
+OTU_Index_k | indexes of OTUs belongs to the cluster k in original 'otu_table'.
+Meta_OTU_Association_k | estimated EF-OTU associations of the cluster k.
+OTU_OTU_Association_k | estimated OTU-OTU associatons of the cluster k.
+B_k | records the matrix which parameterizes EF-OTU associations of the cluster k.
+Theta_k | records the matrix which parameterizes OTU-OTU associations of the cluster k.
+Meta_Mean_k | records the mean values of EFs of the cluster k.
+Meta_Cov_k | records the covariance of EFs of the cluster k.
 
+**:smiling_imp: WARNING: the minimum index is 0 in all index files ('Sample_Index_k', 'OTU_Index_k'), if you process them in R language, remember to add one (+1) to get the right index.**
 
 * You can use the script 'ImportKmldmResult.R' to combine files within the 'result' to produce a 'parameters.RData' file, which can be processed in RStudio conveniently.
 ```
