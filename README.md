@@ -1,5 +1,5 @@
-# kLDM
-kLDM is designed to infer multiple association networks based on variation of environmental factors. [![language](https://img.shields.io/badge/language-c++-brightgreen.svg)]() [![version](https://img.shields.io/badge/version-v1.0-blue.svg)]()
+# kLDM [![language](https://img.shields.io/badge/language-c++-brightgreen.svg)]() [![version](https://img.shields.io/badge/version-v1.0-blue.svg)]()
+kLDM is designed to infer multiple association networks based on variation of environmental factors. 
 
 ![](https://github.com/tinglab/kLDM/blob/master/pictures/model_explain.jpg)
 
@@ -17,6 +17,7 @@ make
 ```
 
 ## Usage
+### Input
 To run kLDM, you need to specify four parameters:
 * Three input files: otu_table, meta_table and matrix_shape
 
@@ -34,7 +35,20 @@ cd ./datasets/crc-data/
 ../../src/run ./crc_otu_table ./crc_fit_meta_table ./crc_matrix_shape ./result
 ```
 * Estimated parameters will be saved into 'result' directory as below:
+![](https://github.com/tinglab/kLDM/blob/master/pictures/result_example.png)
+### Output
+kLDM estimates EF conditions and association networks under every EF condition via a split-merge algorithm:
 
+* Output Explaination
+
+File Name | Content
+----------|--------
+
+
+* You can use the script 'ImportKmldmResult.R' to combine files within the 'result' to produce a 'parameters.RData' file, which can be processed in RStudio conveniently.
+```
+../../ImportKmldmResult.R ./result
+```
 
 
 ## Datasets
