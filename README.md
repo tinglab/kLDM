@@ -1,4 +1,6 @@
-# kmldm
+# kLDM
+kLDM is designed to infer multiple association networks based on variation of environmental factors. [![language](https://img.shields.io/badge/language-c++-blue.svg)]()
+
 不同环境条件下的关联网络分析
 ## Split process
 首先按照环境因素对样本进行分割, 每次将数据进行2-GMM, 递归进行直到cluster中的样本数少于某个阈值
