@@ -62,9 +62,13 @@ Meta_Cov_k | records the covariance of EFs of the cluster k.
 ```
 
 ## Datasets
+Three datasets used in the paper.
 
 Name | Directory | Description | Link
 -----|-----------|------------ | ----
 Colorectal cancer gut dataset | ./datasets/crc-data/ | 16s rRNA gene sequencing, 490 samples with 117 OTUs and 5 EFs | [Baxter, et al. (2016)](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-016-0290-3) 
 TARA Oceans eukaryotic dataset | ./datasets/tara-data/ | 18s rRNA gene sequencing, 221 samples with 67 OTUs and 17 EFs | [Limamendez, et al., 2015](http://science.sciencemag.org/content/348/6237/1262073)
 American Gut project dataset | ./datasets/american-gut-data | 16s rRNA gene sequencing, 11946 samples with 216 OTUs and 22 EFs related to human lifestyle | ftp://ftp.microbio.me/AumericanGut, [Official Website](http://americangut.org/)
+
+## .Biom file processing
+The script './processBiom.py' can be used to filter OTUs and Samples in the .biom file.
