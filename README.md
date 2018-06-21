@@ -72,3 +72,7 @@ American Gut project dataset | ./datasets/american-gut-data | 16s rRNA gene sequ
 
 ## .Biom file processing
 The script './processBiom.py' can be used to filter OTUs and Samples in the .biom file.
+
+
+## Contact
+If you have any question, please send email to **Yuqing Yang** (yyq410@163.com).
