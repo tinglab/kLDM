@@ -1,4 +1,4 @@
-# kLDM [![language](https://img.shields.io/badge/language-c++-brightgreen.svg)]() [![version](https://img.shields.io/badge/version-v1.0-blue.svg)]()
+# kLDM [![language](https://img.shields.io/badge/language-c++-brightgreen.svg)]() [![version](https://img.shields.io/badge/version-v1.0-blue.svg)]() [![topic](https://img.shields.io/badge/metagenomics-association_inference-blue.svg)]()
 kLDM is designed to infer multiple association networks based on variation of environmental factors. 
 
 ![](https://github.com/tinglab/kLDM/blob/master/pictures/model_explain.jpg)
