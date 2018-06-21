@@ -1,4 +1,4 @@
-# kmldm
+# kLDM
 ![](https://img.shields.io/badge/language-c++-blue.svg)
 
 不同环境条件下的关联网络分析
