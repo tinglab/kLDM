@@ -79,25 +79,25 @@ The script './processBiom.py' can be used to filter OTUs and Samples in the .bio
 ### Intermediate Merge Process
 
 ```
--- results
+|-- results
       |-- hierarchical_results
             |-- cluster-1
             |        |-- added
-            |               |-- added
-            |               |-- merged
-            |               |-- original
-            |
+            |        |       |-- added
+            |        |       |-- merged
+            |        |       |-- original
+            |        |
             |        |-- merged
-            |               |-- B_1
-            |               |-- Meta_Cov_1
-            |               |-- Meta_Mean_1
-            |               |-- Meta_OTU_Association_1
-            |               |-- OTU_Index_1
-            |               |-- OTU_OTU_Association_1
-            |               |-- Sample_Index_1
-            |               |-- Sample_Num_1
-            |               |-- Theta_1
-            |               
+            |        |       |-- B_1
+            |        |       |-- Meta_Cov_1
+            |        |       |-- Meta_Mean_1
+            |        |       |-- Meta_OTU_Association_1
+            |        |       |-- OTU_Index_1
+            |        |       |-- OTU_OTU_Association_1
+            |        |       |-- Sample_Index_1
+            |        |       |-- Sample_Num_1
+            |        |       |-- Theta_1
+            |        |       
             |        |-- original
             |               |-- added
             |               |-- merged
