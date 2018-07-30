@@ -114,6 +114,7 @@ In order to visualize all clusters and be convenient for comparing abundance and
 * How to run
 ```
 cd ./
+Rscript ./stateHierarchicalResults.R ./american-gut-data/otu_table ./american-gut-data/meta_table ./american-gut-data/result/ ./american-gut-data/attr_table
 python ./hierarchical_server/hierarchical_server.py --on ./american-gut-data/otu_annotation.txt -mn ./american-gut-data/meta_annotation.txt -an ./american-gut-data/attr_name -ms ./american-gut-data/matrix_shape -res ./american-gut-data/result/ -ot ./american-gut-data/otu_table -mt ./american-gut-data/meta_table -at ./american-gut-data/attr_table
 ```
 * Open the browser and enter http://locahost:8087 
