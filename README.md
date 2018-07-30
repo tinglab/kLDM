@@ -75,6 +75,40 @@ American Gut project dataset | ./datasets/american-gut-data | 16s rRNA gene sequ
 ## .Biom file processing
 The script './processBiom.py' can be used to filter OTUs and Samples in the .biom file.
 
+## :dart: New Feature -- Saving Intermediate Clustering Process and Visualization
+### Intermediate Merge Process
+
+```
+-- results
+      |-- hierarchical_results
+            |-- cluster-1
+            |        |-- added
+            |               |-- added
+            |               |-- merged
+            |               |-- original
+            |
+            |        |-- merged
+            |               |-- B_1
+            |               |-- Meta_Cov_1
+            |               |-- Meta_Mean_1
+            |               |-- Meta_OTU_Association_1
+            |               |-- OTU_Index_1
+            |               |-- OTU_OTU_Association_1
+            |               |-- Sample_Index_1
+            |               |-- Sample_Num_1
+            |               |-- Theta_1
+            |               
+            |        |-- original
+            |               |-- added
+            |               |-- merged
+            |               |-- original
+            |        
+            |-- cluster-2
+            |-- cluster-3
+            ...
+```
+### Hierarchical Server
+![](https://github.com/tinglab/kLDM/blob/master/pictures/hierarchical_server.png)
 
 ## Contact
 If you have any question, please send email to **Yuqing Yang** (yyq410@163.com).
