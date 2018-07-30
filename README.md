@@ -75,9 +75,9 @@ American Gut project dataset | ./datasets/american-gut-data | 16s rRNA gene sequ
 ## .Biom file processing
 The script './processBiom.py' can be used to filter OTUs and Samples in the .biom file.
 
-## :dart: <font color=red>New Feature</font> -- Saving Intermediate Clustering Process and Visualization
+## :dart: New Feature -- Saving Intermediate Clustering Process and Visualization
 ### Intermediate Merge Process
-Except the final estimated EF-condtions, or clusters, kLDM will also record sub-clusters and the merge process in the directory '{output_directory}/hierarchical_results/'. Every time kLDM will merge clusters from 'added/merged' and 'original/merged' into one cluster, which is saved into new 'merged' directory. The structure of directories is as below, 
+Except the final estimated EF-condtions, or clusters, kLDM will also record sub-clusters and the merge process in the directory '{output_directory}/hierarchical_results/'. Every time kLDM will merge clusters from 'added/merged' and 'original/merged' into one cluster, which is saved into new 'merged' directory. The structure of directories is shown as below, 
 ```
 |-- results
       |-- hierarchical_results
@@ -107,7 +107,9 @@ Except the final estimated EF-condtions, or clusters, kLDM will also record sub-
             |-- cluster-3
             ...
 ```
+
 ### Hierarchical Server
+In order to visualize all clusters and be convenient for comparing abundance and OTU-OTU and EF-OTU associations among clusters, a web application is developed based python Flask framework and its code is at 'hierarchical_server' directory.
 ![](https://github.com/tinglab/kLDM/blob/master/pictures/hierarchical_server.png)
 
 ## Contact
