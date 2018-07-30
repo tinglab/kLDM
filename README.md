@@ -110,6 +110,7 @@ Except the final estimated EF-condtions, or clusters, kLDM will also record sub-
 
 ### Hierarchical Server
 In order to visualize all clusters and be convenient for comparing abundance and OTU-OTU and EF-OTU associations among clusters, a web application is developed based python Flask framework and its code is at 'hierarchical_server' directory.
+* Pre-requisites (python packages): flask, argparse, numpy, scipy
 * How to run
 ```
 cd ./
