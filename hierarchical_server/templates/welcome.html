@@ -1,0 +1,576 @@
+<!doctype html>
+<head>
+    <script src="{{ url_for("static", filename="jquery-3.3.1.min.js")}}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{url_for("static", filename="tree.css")}}">
+</head>
+<body style="padding:20px;">
+    <div class="row">
+        <nav class="navbar navbar-default">
+            <a class="navbar-brand" href="" style="font-size:30px; color:#428bca;">kLDM: Association inference based on variation of environmental factors</a>
+              </div> 
+
+        </nav>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-5">
+            <!-- Basic Info -->
+        <h3 style="margin-left:20px; color:#428bca;"><span class="badge" style="background-color:#428bca; margin-bottom:5px;">1</span> &nbsp;Dataset Information</h3>
+          <div class="btn-group" role="group" aria-label="..." >
+              <button type = "button" class="btn btn-danger">Sample Num: {{tree_info["N"]}}</button>
+              <button type = "button" class="btn btn-warning">OTU Num: {{tree_info["P"]}}</button>
+              <button type = "button" class="btn btn-info">EF Num: {{tree_info["Q"]}}</button>
+          </div>
+            
+            <!-- Clustering Results -->
+            <div style="margin-top:20px;">
+                <h3 style="margin-left:20px; color:#428bca;"><span class="badge" style="background-color:#428bca; margin-bottom:5px;">2</span> &nbsp;Clustering Results of kLDM</h3>
+                <div style= "margin:20px; border:2px solid #428bca; border-radius: 5px;">
+                <ul class="tree" style="list-style-type:none;">
+                    {% set tree = tree_info["root"] %}
+                    {% for per_cluster in tree recursive %}
+                    {% set per_name = per_cluster["name"] %}
+                    {% set per_merged = per_cluster["merged"] %}
+                    {% set per_p = per_merged["P"] %}
+                    {% set per_n = per_merged["N"] %}
+                    {% set per_added = per_cluster["added"] %}
+                    {% set per_origin = per_cluster["original"] %}
+                    {% set per_dir = per_merged["dir"] %}
+                    <li>
+                        {% if per_name.startswith("Cluster")%}
+                        <span class="tree_label" data-dir = "{{ per_dir }}" style="color:#fff; border: 1px solid #428bca; border-radius: 5px; padding:2px; background-color:#428bca;">{{ per_name }}, P={{ per_p }}, N={{ per_n }}</span>
+                        {% else %}
+                        <span class="tree_label" data-dir = "{{ per_dir }}"  style="color:#428bca; border: 1px solid #428bca; border-radius: 5px; padding:2px;">{{ per_name }}, P={{ per_p }}, N={{ per_n }}</span>
+                        {% endif %}
+                        <ul style="list-style-type:none;">
+                            {{ loop(per_origin) }}
+                            {{ loop(per_added) }}
+                        </ul>
+                    </li>    
+                    {% endfor %}
+                </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-7">
+            <h3 style="margin-left:20px; color:#428bca;"><span class="badge" style="background-color:#428bca; margin-bottom:5px;">3</span> &nbsp;Clustering Results of kLDM </h3>
+            <div id="cluster_list">
+                {% set first_info = tree_info["first_layer"] %}
+                {% for per_layer in first_info %}
+                {% set per_name = per_layer["cluster_name"] %}
+                <button class="btn btn-default btn-xs" style="margin: 5px;" data-name="{{ per_name }}"> {{ per_name }} &nbsp;&nbsp;<span aria-hidden="true" onclick = "" class="close_span">&times;</span></button>
+                {% endfor %}
+            </div>
+            <div style="border:2px solid #fff; margin-top: 5px;">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role = "presentation" class="active"><a href="#meta" aria-controls="meta" role="tab" data-toggle="tab">EF [Mean Value (Std.)]</a></li>
+                    <li role = "presentation"><a href="#otu" aria-controls="otu" role="tab" data-toggle="tab">OTU [Mean Relative Abundance (Std.)]</a></li>
+                    <li role = "presentation"><a href="#attr" aria-controls="attr" role="tab" data-toggle="tab">Attribute [Ratio1 / Ratio2]</a></li>
+                    <li role = "presentation" class="dropdown">
+                        <a href="#" aria-controls="otu_otu-contents" id = "otu_otu" class="dropdown-toggle" data-toggle="dropdown">OTU-OTU Association <span class="caret"></span></a>
+                        <ul class="dropdown-menu" aria-labelledby="otu_otu" id = "otu_otu-contents" role="tablist">
+                            {% set first_info = tree_info["first_layer"] %}
+                            {% for per_layer in first_info %}
+                            {% set per_name = per_layer["cluster_name"]  %}
+                            {% set per_id = per_name | replace(", ", "-", 2) | replace("=","-",2) %}
+                            <li><a href="#{{per_id}}_otu" aria-controls="{{per_id}}_otu" role="tab" data-toggle="tab" id ="{{per_id}}_otu-tab" data-name="{{ per_name }}">{{ per_name }}</a></li>
+                            {% endfor %}
+                        </ul>
+
+                    </li>
+                    <li role = "presentation" class="dropdown">
+                        <a href="#" aria-controls="otu_otu-contents" id = "otu_otu" class="dropdown-toggle" data-toggle="dropdown">EF-OTU Association <span class="caret"></span></a>
+                        <ul class="dropdown-menu" aria-labelledby="otu_otu" id = "ef_otu-contents" role="tablist">
+                            {% set first_info = tree_info["first_layer"] %}
+                            {% for per_layer in first_info %}
+                            {% set per_name = per_layer["cluster_name"]%}
+                            {% set per_id = per_name | replace(", ", "-", 2) | replace("=","-",2) %}
+                            <li><a href="#{{per_id}}_ef" aria-controls="{{per_id}}_ef" role="tab" data-toggle="tab" id = "{{per_id}}_ef-tab" data-name="{{ per_name }}">{{ per_name }}</a></li>
+                            {% endfor %}
+                        </ul>
+
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    {% set attr_name = tree_info["attr_name"]%}
+                    {% set attr_num = tree_info["attr_num"]%}
+                    {% set otu_name = tree_info["otu_name"]%}
+                    {% set otu_num = tree_info["P"]%}
+                    {% set meta_name = tree_info["meta_name"]%}
+                    {% set meta_num = tree_info["Q"]%}
+                    {% set cluster_num = tree_info["K"]%}
+                    {% set meta_pvalue = tree_info["Pvalue"]["meta"] %}
+                    {% set otu_pvalue = tree_info["Pvalue"]["otu"] %}
+                    {% set attr_pvalue = tree_info["Pvalue"]["attr"] %}
+
+                    <div role="tabpanel" class="tab-pane active" id="meta">
+                        <table class="table table-condensed" id="meta_table" style="word-break:break-all;overflow-x:auto; overflow-y:auto;">
+                            <tr>
+                                <th>Meta Name</th>
+                                {% for k in range(cluster_num) %}
+                                {% set per_cluster = first_info[k] %}
+                                <th>{{ per_cluster["cluster_name"] }}</th>
+                                {% endfor %}
+                                <th width="230">P-value</th>
+                            </tr>
+                            {% for i in range(meta_num) %}
+                            <tr>
+                                <td>{{ meta_name[i] }}</td>
+                                {% for j in range(cluster_num) %}
+                                {% set per_cluster = first_info[j] %}
+                                <td>{{ per_cluster["meta"][i]}}</td>
+                                {% endfor %}
+                                <td>{{ meta_pvalue[i] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="otu" style="overflow-x:auto; overflow-y:auto;">
+                        <table class="table table-condensed" id="otu_table">
+                            <tr>
+                                <th>OTU Name</th>
+                                {% for k in range(cluster_num) %}
+                                {% set per_cluster = first_info[k] %}
+                                <th>{{ per_cluster["cluster_name"] }}</th>
+                                {% endfor %}
+                                <th width="230">P-value</th>
+                            </tr>
+                            {% for i in range(otu_num) %}
+                            <tr>
+                                <td>{{ otu_name[i] }}</td>
+                                {% for j in range(cluster_num) %}
+                                {% set per_cluster = first_info[j] %}
+                                <td>{{ per_cluster["otu"][i]}}</td>
+                                {% endfor %}
+                                <td>{{ otu_pvalue[i] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="attr" style="overflow-x:auto; overflow-y:auto;">
+                        <h6>* Ratio1: the ratio of the attribute (=1) in current cluster</h6>
+                        <h6>* Ratio2: the ratio of the attribute (=1) in whole dataset</h6>
+                        <table class="table table-condensed" id="attr_table">
+                            <tr>
+                                <th>Attribute Name</th>
+                                {% for k in range(cluster_num) %}
+                                {% set per_cluster = first_info[k] %}
+                                <th>{{ per_cluster["cluster_name"] }}</th>
+                                {% endfor %}
+                                <th width="230">P-value</th>
+                            </tr>
+                            {% for i in range(attr_num) %}
+                            <tr>
+                                <td>{{ attr_name[i] }}</td>
+                                {% for j in range(cluster_num) %}
+                                {% set per_cluster = first_info[j] %}
+                                <td>{{ per_cluster["attr"][i]}}</td>
+                                {% endfor %}
+                                <td>{{ attr_pvalue[i] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+
+                    {% set first_info = tree_info["first_layer"] %}
+                    {% for per_layer in first_info %}
+                    {% set per_name = per_layer["cluster_name"] %}
+                    {% set per_stat_dir = per_layer["stat_dir"] %}
+                    {% set per_otu_otu = per_layer["association"]["otu_otu"] %}
+                    {% set per_otu_otu_num = per_layer["association"]["otu_otu_num"] %}
+                    {% set per_otu_otu_ratio = per_layer["association"]["otu_otu_ratio"] %}
+                    {% set per_id = per_name | replace(", ", "-", 2) | replace("=","-",2) %}
+                    
+                    <div role="tabpanel" class="tab-pane" aria-labelledby="{{per_id}}_otu-tab" id="{{per_id}}_otu" style="overflow-x:auto; overflow-y:auto;">
+                          <div class="btn-group" role="group" >
+                              <button type = "button" class="btn btn-primary">Cluster Name: {{per_name}}</button>
+                              <button type = "button" class="btn btn-info">Top {{per_otu_otu_ratio}} % OTU-OTU Association</button>
+                              <button type = "button" class="btn btn-success"> Num: {{per_otu_otu_num}}</button>
+                          </div>
+                        <div class="input-group" style="width:250px;">
+                            <span class="input-group-addon">Top</span>
+                            <input type="text" class="form-control" placeholder = "0.0~100.0" aria-label="ratio"><span data-stat="{{ per_stat_dir }}" data-type="otu" class="input-group-addon filter_button">%&nbsp;&nbsp;Filter</span>
+                        </div>
+                        <div>
+                            <table class="table table-condensed">
+                                <tr>
+                                    <th>OTU-1</th>
+                                    <th>OTU-2</th>
+                                    <th>Association</th>
+                                </tr>
+                                {% for per_asso in per_otu_otu %}
+                                <tr>
+                                    <td>{{ per_asso[0] }}</td>
+                                    <td>{{ per_asso[1] }}</td>
+                                    <td>{{ per_asso[2] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                    {% set first_info = tree_info["first_layer"] %}
+                    {% for per_layer in first_info %}
+                    {% set per_name = per_layer["cluster_name"] %}
+                    {% set per_stat_dir = per_layer["stat_dir"] %}
+                    {% set per_ef_otu = per_layer["association"]["ef_otu"] %}
+                    {% set per_ef_otu_num = per_layer["association"]["ef_otu_num"] %}
+                    {% set per_ef_otu_ratio = per_layer["association"]["ef_otu_ratio"] %}
+                    {% set per_id = per_name | replace(", ", "-", 2) | replace("=","-",2) %}
+
+                    <div role="tabpanel" class="tab-pane" id="{{per_id}}_ef" style="overflow-x:auto; overflow-y:auto;" aria-labelledby="{{per_id}}_ef-tab">
+                          <div class="btn-group" role="group" >
+                              <button type = "button" class="btn btn-primary">Cluster Name: {{per_name}}</button>
+                              <button type = "button" class="btn btn-info">Top {{per_ef_otu_ratio}} % EF-OTU Association</button>
+                              <button type = "button" class="btn btn-success"> Num: {{per_ef_otu_num}}</button>
+                          </div>
+                        <div class="input-group" style="width:250px;">
+                            <span class="input-group-addon">Top</span>
+                            <input type="text" class="form-control" placeholder = "0.0~100.0" aria-label="ratio"><span class="input-group-addon filter_button" data-stat="{{ per_stat_dir }}" data-type="ef">%&nbsp;&nbsp;Filter</span>
+                        </div>
+                        <div>
+                            <table class="table table-condensed">
+                                <tr>
+                                    <th>EF</th>
+                                    <th>OTU</th>
+                                    <th>Association</th>
+                                </tr>
+                                {% for per_asso in per_ef_otu %}
+                                <tr>
+                                    <td>{{ per_asso[0] }}</td>
+                                    <td>{{ per_asso[1] }}</td>
+                                    <td>{{ per_asso[2] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+$(document).ready(function() {
+
+    function checkNameExist(cname) {
+        console.log("$"+cname+"$");
+        var result = false;
+        $("#cluster_list").children("button").each(function() {
+            var per_name = $(this).attr("data-name");
+            console.log("$"+per_name+"$");
+            console.log(cname == per_name);
+            if (per_name == cname) {
+                result = true;
+            }
+        });
+
+        return result;
+    }
+
+    function filterPvalue(per_text, cname) {
+      var ps_list = per_text.split("; ");
+      // console.log(ps_list);
+        var final_list = [];
+        for (var i = 0; i < ps_list.length; ++i) {
+            if (ps_list[i].indexOf(cname) == -1) {
+                final_list.push(ps_list[i]);
+            }
+        }
+
+        return final_list.join("; ")
+    }
+
+    function removeTable(index, table_id, cluster_name) {
+        var table_main = table_id + " tbody";
+        $(table_main).children().each(function() {
+            $(this).children(":eq(" + (index + 1) + ")").remove();
+            var per_ptext = $(this).children(":last").text();
+            var new_ptext = filterPvalue(per_ptext, cluster_name);
+            $(this).children(":last").text(new_ptext);
+        });
+    }
+
+    function addToTable(cluster_name, info_list, table_id, pvalue_list) {
+        var line = 0;
+        var table_main = table_id + " tbody";
+        // console.log(info_list);
+        // console.log($(table_id).children());
+        $(table_main).children().each(function() {
+            // console.log(line);
+            if (line == 0) {
+                var head_html = "<th>" + cluster_name + "</th>";
+                $(this).children().last().remove();
+                $(this).append(head_html);
+                $(this).append("<th width=\"230\">P-value</th>");
+            } else {
+                var value_html = "<td>" + info_list[line - 1] + "</td>";
+                $(this).children().last().remove();
+                $(this).append(value_html);
+                var pv_html = "<td>" + pvalue_list[line - 1] + "</td>";
+                $(this).append(pv_html);
+            }
+            line += 1;
+        });
+    }
+
+    function convert2ID(name) {
+        var name1 = name.replace(/, /g, "-");
+        var name2 = name1.replace(/=/g, "-");
+
+        return name2;
+    }
+
+    function constructTableContent(table_type, assos, top_ratio) {
+        var table_content = "<table class=\"table table-condensed\">";
+        var table_head = "";
+        if (table_type == "otu") {
+            table_head = "<tr><th>OTU-1</th><th>OTU-2</th><th>Association</th></tr>";
+        } else if (table_type == "ef") {
+            table_head = "<tr><th>EF</th><th>OTU</th><th>Association</th></tr>";
+        }
+
+        var table_body = "";
+
+        for (var i = 0; i < assos.length; ++i) {
+            var per_ass = assos[i];
+            var per_row_html = constructAssoHTML(per_ass);
+            table_body += per_row_html;
+        }
+        // console.log(table_body);
+        table_content += table_head + table_body + "</table>";
+
+        return table_content;
+    }
+
+    function buildButton(class_name, name) {
+        return "<button type = \"button\" class=\"" + class_name + "\">" + name + "</button>";
+    }
+
+    function constructTableInfo(type, ratio, asso_num, cname) {
+        var table_info_html = "<div class=\"btn-group\" role=\"group\" >";
+        table_info_html += buildButton("btn btn-primary", "Cluster Name: " + cname);
+        if (type == "ef") {
+            table_info_html += buildButton("btn btn-info", "Top " + ratio + "% EF-OTU Association");
+        } else if (type == "otu") {
+            table_info_html += buildButton("btn btn-info", "Top " + ratio + "% OTU-OTU Association");
+        }
+        table_info_html += buildButton("btn btn-success", "Num: " + asso_num);
+
+        table_info_html += "</div>";
+        return table_info_html;
+    }
+
+    function constructFilterDiv(stat_dir, type) {
+        return "<div class=\"input-group\" style=\"width:250px;\"><span class=\"input-group-addon\">Top</span> <input type=\"text\" class=\"form-control\" placeholder = \"0.0~100.0\" aria-label=\"ratio\"><span class=\"input-group-addon filter_button\" data-stat=\"" + stat_dir + "\" data-type=\"" + type + "\">%&nbsp;&nbsp;Filter</span></div>";
+    }
+
+    function constructPanelHead(per_id, type) {
+        var id = per_id + "_" + type;
+        return "<div role=\"tabpanel\" class=\"tab-pane\" id=\"" + id + "\" style=\"overflow-x:auto; overflow-y:auto;\" aria-labelledby=\"" + id + "-tab\">";
+    }
+
+    function addToAssoPanel(name, id, type, dir_name, ratio, asso) {
+        var per_id = id + "_" + type;
+        var asso_num = asso.length;
+        var panel_head = constructPanelHead(id, type);
+        // console.log("panel_head", panel_head);
+        var filter_html = constructFilterDiv(dir_name, type);
+        var table_info_html = constructTableInfo(type, ratio, asso_num, name);
+        var table_html = "<div>" + constructTableContent(type, asso, ratio, name) + "</div>";
+        var final_html = panel_head + table_info_html + filter_html + table_html + "</div>";
+
+        $("div.tab-content").append(final_html);
+    }
+
+    function extractCNames(per_text) {
+        var pos = per_text.indexOf(",");
+        return per_text.substring(0, pos);
+    }
+
+    function getCurrentCNames(){
+        var cnames = [];
+        $("#cluster_list").find("button").each(function() {
+            cnames.push(extractCNames($(this).text()));
+        });
+        return cnames;
+    }
+
+    function removeDropItem(ul_id, item_id, div_id) {
+        var a_item = $(ul_id).find("a[id='" + item_id + "']").first();
+        a_item.parent().remove();
+        $("div.tab-content").children("div[id='" + div_id + "']").remove();
+    }
+
+    $(".tree_label").click(function() {
+        var name = $(this).text();
+        var dir = $(this).attr("data-dir");
+
+        if (checkNameExist(name)) {
+            console.log("equal");
+            alert("The result has already shown !");
+            return;
+        }
+
+        var button_html = "<button class=\"btn btn-default btn-xs\" style=\"margin: 5px;\" data-name=\"" + name + "\">" + name + "&nbsp;&nbsp;<span aria-hidden=\"true\" class=\"close_span\">&times;</span></button>";
+        $("#cluster_list").append(button_html);
+        // get current cluster names 
+        var cluster_names = getCurrentCNames();
+        console.log(cluster_names)
+
+        // add into drop list
+        var otu_drop = $("#otu_otu-contents");
+        var ef_drop = $("#ef_otu-contents");
+        var per_id = convert2ID(name);
+        var otu_item = "<li><a href=\"#" + per_id + "_otu\" aria-controls=\"" + per_id + "_otu\" role=\"tab\" data-toggle=\"tab\" id = \"" + per_id + "_otu-tab\" data-name=\"" + name + "\">" + name + "</a></li>";
+        var ef_item = "<li><a href=\"#" + per_id + "_ef\" aria-controls=\"" + per_id + "_ef\" role=\"tab\" data-toggle=\"tab\" id = \"" + per_id + "_ef-tab\" data-name=\"" + name + "\">" + name + "</a></li>";
+        otu_drop.append(otu_item);
+        // console.log(otu_item);
+        ef_drop.append(ef_item);
+
+        var close_span = $("#cluster_list").children().last().children(".close_span").first();
+        $(close_span).click(function() {
+            // remove info action
+            var cname = $(this).parent().attr("data-name");
+            var pcname = extractCNames(cname);
+            var index = 0;
+            var flag = false;
+            $("#cluster_list").children("button").each(function() {
+                var per_name = $(this).attr("data-name");
+                if (per_name == cname) {
+                    flag = true;
+                }
+                if (! flag) {
+                    index += 1;
+                }
+            });
+            // remove mean info
+            removeTable(index, "#meta_table", pcname);
+            removeTable(index, "#otu_table", pcname);
+            removeTable(index, "#attr_table", pcname);
+            // remove drop item and panel
+            removeDropItem("#otu_otu-contents", per_id + "_otu-tab", per_id + "_otu");
+            removeDropItem("#ef_otu-contents", per_id + "_ef-tab", per_id + "_ef");
+
+            $(this).parent().remove();
+        });
+
+      // console.log(name, dir);
+        var data_json = {};
+        data_json["name"] = name;
+        data_json["dir"] = dir;
+        data_json["cluster_names"] = cluster_names;
+        $.post("/getMeanInfo/", {"value": JSON.stringify(data_json)}, function(data) {
+            // add info table
+            // console.log(data);
+            var cname = data["cluster_name"];
+            var meta_list = data["meta"];
+            var meta_pv = data["meta_p"];
+            var otu_list = data["otu"];
+            var otu_pv = data["otu_p"];
+            var attr_list = data["attr"];
+            var attr_pv = data["attr_p"];
+            // console.log(meta_list);
+            // add into table
+            addToTable(cname, meta_list, "#meta_table", meta_pv);
+            addToTable(cname, otu_list, "#otu_table", otu_pv);
+            addToTable(cname, attr_list, "#attr_table", attr_pv);
+
+            // association
+            var otu_otu = data["otu_otu"];
+            var ef_otu = data["ef_otu"];
+            var dir_name = data["dir"];
+            var ratio = 10;
+            // add into panel 
+            // console.log(ef_otu);
+            addToAssoPanel(cname, per_id, "otu", dir_name, ratio, otu_otu);
+            $("div.tab-content").children().last().find("span.filter_button").click(function() {
+                bindFilterEvent($(this));
+            });
+            addToAssoPanel(cname, per_id, "ef", dir_name, ratio, ef_otu);
+            $("div.tab-content").children().last().find("span.filter_button").click(function() {
+                bindFilterEvent($(this));
+            });
+            // bind event
+            // console.log($("div.tab-content").children().last());
+            otu_drop.children().last().find("a").click(function() {
+                console.log("click a");
+                $(this).tab('show');
+            });
+            ef_drop.children().last().find("a").click(function() {
+                $(this).tab('show');
+            });
+        });
+
+    });
+
+    function constructAssoHTML(asso) {
+        var per_html = "<tr>";
+        per_html += "<td>" + asso[0] + "</td>";
+        per_html += "<td>" + asso[1] + "</td>";
+        per_html += "<td>" + asso[2] + "</td>";
+        per_html += "</tr>";
+
+        return per_html;
+    }
+
+    function updateTableInfo(asso_num, top_ratio, table_type, table_info) {
+        var top_button = table_info.find("button.btn-info");
+        var num_button = table_info.find("button.btn-success");
+        if (table_type == "otu") {
+            top_button.text("Top " + top_ratio + " % OTU-OTU Assocition");
+        } else if (table_type == "ef") {
+            top_button.text("Top " + top_ratio + " % EF-OTU Assocition");
+        }
+        num_button.text("Num: " + asso_num);
+    }
+
+    function updateAssociationTable(table_context, table_type, assos, top_ratio, table_info) {
+        var asso_num = assos.length;
+        var table_content = constructTableContent(table_type, assos, top_ratio);
+        table_context.html(table_content);
+        updateTableInfo(asso_num, top_ratio, table_type, table_info);
+
+        return;
+    }
+
+    function bindFilterEvent(context) {
+        var stat_dir = context.attr("data-stat");
+        var stat_type = context.attr("data-type");
+        var top_ratio = context.prev().val();
+        var table_info = context.parent().prev();
+        var table_parent = context.parent().next();
+        var table_context = table_parent.children("table");
+        if (top_ratio != null && top_ratio.length > 0) {
+            $.get("/getAssoInfo", {"dir": stat_dir, "type":stat_type, "ratio": top_ratio}, function(data) {
+                // add asso into panel and table
+                // console.log(data);
+                table_context.remove();
+                table_context.attr("class", "table table-condensed");
+                if (stat_type == "otu") {
+                    updateAssociationTable(table_parent, "otu", data["asso"], top_ratio, table_info);
+                } else if (stat_type == "ef") {
+                    updateAssociationTable(table_parent, "ef", data["asso"], top_ratio, table_info);
+                }
+            });
+        } else {
+            alert("Value Cann't be NULL !'")
+        }
+    }
+
+    $(".filter_button").click(function() {
+        bindFilterEvent($(this));
+    });
+});
+</script>
