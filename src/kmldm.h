@@ -21,11 +21,21 @@ struct ChildInfo {
     bool is_left;
 };
 
+// record previous result before merge 
+struct OldCluster {
+    VectorXd meta_mean;
+    MatrixXd meta_cov;
+    std::vector<int> sample_index;
+    std::vector<int> otu_index;
+    mLDMResult mldm_res;
+};
+
 // record the intermediate result of the split process
 struct SplitResult {
     int parent_index;
     int child1_index;
     int child2_index;
+    // if merge with other cluster, record 
     int layer_num;
     // show if the child is discarded
     bool child1_discard;
@@ -35,10 +45,16 @@ struct SplitResult {
     // store the mldm results
     mLDMResult child1_mldm_res;
     mLDMResult child2_mldm_res;
+    // record merge infomation
+    std::vector<int> child1_old_list;
+    std::vector<int> child2_old_list;
     // selected OTUs of child1
     std::vector<int> child1_otus_list;
     // selected OTUs of child2
     std::vector<int> child2_otus_list;
+    // record the other cluster index when merge
+    std::vector<ChildInfo> child1_merge_list;
+    std::vector<ChildInfo> child2_merge_list;
 };
 
 class KmLDM {
@@ -65,6 +81,10 @@ private:
     std::vector<SplitResult> split_results_list;
     // point to the next position of new split_reuslts_list
     int split_tail;
+    // store intermediate results of merge process 
+    std::vector<OldCluster> old_results_list;
+    // point to the next position of old_results_list
+    int old_tail;
     // the threshold of kmeans
     double delta_kmeans;
     // max iterations of kmeans
@@ -129,6 +149,9 @@ public:
 
     // construct otu and meta data according to otu list and sample list
     void constructData(std::vector<int>& samples_list, std::vector<int>& otus_list, MatrixXi& otu_data, MatrixXd& ef_data);
+
+    // export hierarchical result 
+    void exportHierarchicalNodes(int cluster_number, int node_index, bool is_left, std::string result_dir_name);
 };
 
 #endif

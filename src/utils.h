@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <map>
 #include <omp.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -87,5 +89,7 @@ void getIntersectList(std::vector<int>& list_a, std::vector<int>& list_b, std::v
 
 // remove the i-th row of matrix X, then update the X
 void removeMatrixRow(MatrixXd& X, int i);
+// mkdir safely
+void safe_mkdir(std::string dir_name);
 
 #endif

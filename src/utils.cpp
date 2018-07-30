@@ -369,6 +369,15 @@ void removeMatrixRow(MatrixXd& X, int i) {
     return;
 }
 
-
+void safe_mkdir(std::string dir_name) {
+    int flag = mkdir(dir_name.c_str(), 0775);
+    if (flag == 0) {
+        std::cout << "create directory success ~" << std::endl;
+    } else {
+        std::cout << "create directory fail !!!" << std::endl;
+        exit(0);
+    }
+    return;
+}
 
 

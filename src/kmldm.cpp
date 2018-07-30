@@ -10,6 +10,7 @@ KmLDM::KmLDM(float zero_r, double del_kmeans, int max_iters_kmeans,
     int max_iters_mldm /*, int noise_s*//*, bool remove_sample*/) {
     // set the next position of the splitResults
     split_tail = 0;
+    old_tail = 0;
     // init parameters
     zero_ratio = zero_r;
     delta_kmeans = del_kmeans;
@@ -721,7 +722,7 @@ void KmLDM::mergeMatchedChilds(VectorXd& left_center, VectorXd& right_center, st
                             std::cout << "right child of node " << left_node.node_index << std::endl;
                         }
 #endif
-
+        
                         if (right_position) {
                             split_results_list[right_node.node_index].child1_discard = true;
                         } else {
@@ -732,6 +733,20 @@ void KmLDM::mergeMatchedChilds(VectorXd& left_center, VectorXd& right_center, st
 
                         // update the left node
                         if (left_position) {
+                            // record merge info 
+                            // record the other cluster index
+                            split_results_list[left_node.node_index].child1_merge_list.push_back(right_node);
+                            // record current cluster old result 
+                            OldCluster left_old;
+                            left_old.sample_index = left_samples_list;
+                            left_old.otu_index = left_otus_list;
+                            left_old.meta_mean = split_results_list[left_node.node_index].gmm2_res.cluster1_mean;
+                            left_old.meta_cov = split_results_list[left_node.node_index].gmm2_res.cluster1_cov;
+                            left_old.mldm_res = split_results_list[left_node.node_index].child1_mldm_res;
+                            old_results_list.push_back(left_old);
+                            split_results_list[left_node.node_index].child1_old_list.push_back(old_tail);
+                            old_tail ++;
+
                             // update otus list
                             split_results_list[left_node.node_index].child1_otus_list = merged_otus_list;
                             // update kmldm result
@@ -740,7 +755,23 @@ void KmLDM::mergeMatchedChilds(VectorXd& left_center, VectorXd& right_center, st
                             split_results_list[left_node.node_index].gmm2_res.cluster1_mean = merged_meta_mean;
                             split_results_list[left_node.node_index].gmm2_res.cluster1_cov = merged_meta_cov;
                             split_results_list[left_node.node_index].gmm2_res.cluster1_index_list = merged_samples_list;
+                            
+
                         } else {
+                            // record merge info 
+                            // record the other cluster index
+                            split_results_list[left_node.node_index].child2_merge_list.push_back(right_node);
+                            // record current cluster old result 
+                            OldCluster left_old;
+                            left_old.sample_index = left_samples_list;
+                            left_old.otu_index = left_otus_list;
+                            left_old.meta_mean = split_results_list[left_node.node_index].gmm2_res.cluster2_mean;
+                            left_old.meta_cov = split_results_list[left_node.node_index].gmm2_res.cluster2_cov;
+                            left_old.mldm_res = split_results_list[left_node.node_index].child2_mldm_res;
+                            old_results_list.push_back(left_old);
+                            split_results_list[left_node.node_index].child2_old_list.push_back(old_tail);
+                            old_tail ++;
+
                             // update otus list
                             split_results_list[left_node.node_index].child2_otus_list = merged_otus_list;
                             // update kmldm result
@@ -773,6 +804,20 @@ void KmLDM::mergeMatchedChilds(VectorXd& left_center, VectorXd& right_center, st
 
                         // update the right node
                         if (right_position) {
+                            // record merge info 
+                            // record the other node index
+                            split_results_list[right_node.node_index].child1_merge_list.push_back(left_node);
+                            // record current cluster old result 
+                            OldCluster right_old;
+                            right_old.sample_index = right_samples_list;
+                            right_old.otu_index = right_otus_list;
+                            right_old.meta_mean = split_results_list[right_node.node_index].gmm2_res.cluster1_mean;
+                            right_old.meta_cov = split_results_list[right_node.node_index].gmm2_res.cluster1_cov;
+                            right_old.mldm_res = split_results_list[right_node.node_index].child1_mldm_res;
+                            old_results_list.push_back(right_old);
+                            split_results_list[right_node.node_index].child1_old_list.push_back(old_tail);
+                            old_tail ++;
+
                             // update otus list
                             split_results_list[right_node.node_index].child1_otus_list = merged_otus_list;
                             // update kmldm result
@@ -782,6 +827,20 @@ void KmLDM::mergeMatchedChilds(VectorXd& left_center, VectorXd& right_center, st
                             split_results_list[right_node.node_index].gmm2_res.cluster1_cov = merged_meta_cov;
                             split_results_list[right_node.node_index].gmm2_res.cluster1_index_list = merged_samples_list;
                         } else {
+                            // record merge info 
+                            // record the other cluster index 
+                            split_results_list[right_node.node_index].child2_merge_list.push_back(left_node);
+                            // record current cluster old result 
+                            OldCluster right_old;
+                            right_old.sample_index = right_samples_list;
+                            right_old.otu_index = right_otus_list;
+                            right_old.meta_mean = split_results_list[right_node.node_index].gmm2_res.cluster2_mean;
+                            right_old.meta_cov = split_results_list[right_node.node_index].gmm2_res.cluster2_cov;
+                            right_old.mldm_res = split_results_list[right_node.node_index].child2_mldm_res;
+                            old_results_list.push_back(right_old);
+                            split_results_list[right_node.node_index].child2_old_list.push_back(old_tail);
+                            old_tail ++;
+
                             // update otus list
                             split_results_list[right_node.node_index].child2_otus_list = merged_otus_list;
                             // update kmldm result
@@ -1224,6 +1283,78 @@ void exportCluster(int number, mLDMResult& result, std::vector<int>& otus, Vecto
     return;
 }
 
+// export hierarchical results 
+void KmLDM::exportHierarchicalNodes(int cluster_number, int node_index, bool is_left, std::string result_dir_name) {
+
+    SplitResult cur_node = split_results_list[node_index];
+    mLDMResult cur_result;
+    std::vector<int> cur_otus;
+    std::vector<int> cur_sample_list;
+    VectorXd cur_meta_mean;
+    MatrixXd cur_meta_cov;
+    int cur_sample_num;
+    std::vector<int> cur_old_list;
+    std::vector<ChildInfo> cur_merge_list;
+
+    if (is_left) {
+        cur_result = cur_node.child1_mldm_res;
+        cur_otus = cur_node.child1_otus_list;
+        cur_meta_mean = cur_node.gmm2_res.cluster1_mean;
+        cur_meta_cov = cur_node.gmm2_res.cluster1_cov;
+        cur_sample_list = cur_node.gmm2_res.cluster1_index_list;
+        cur_sample_num = cur_sample_list.size();
+        cur_old_list = cur_node.child1_old_list;
+        cur_merge_list = cur_node.child1_merge_list;
+    } else {
+        cur_result = cur_node.child2_mldm_res;
+        cur_otus = cur_node.child2_otus_list;
+        cur_meta_mean = cur_node.gmm2_res.cluster2_mean;
+        cur_meta_cov = cur_node.gmm2_res.cluster2_cov;
+        cur_sample_list = cur_node.gmm2_res.cluster2_index_list;
+        cur_sample_num = cur_sample_list.size();
+        cur_old_list = cur_node.child2_old_list;
+        cur_merge_list = cur_node.child2_merge_list;
+    }
+
+    // data dir 
+    std::string cur_dir = result_dir_name + "/merged/";
+    safe_mkdir(cur_dir);
+
+    // export current node 
+    exportCluster(cluster_number, cur_result, cur_otus, cur_meta_mean, cur_meta_cov, cur_sample_list, cur_sample_num, const_cast<char*>(cur_dir.c_str()));
+
+    int layer = cur_merge_list.size();
+    for (int i = layer - 1; i > -1; --i) {
+        // mkdir 
+        std::string origin_dir = result_dir_name + "/original/";
+        safe_mkdir(origin_dir);
+        origin_dir = origin_dir + "/merged/";
+        safe_mkdir(origin_dir);
+        std::string add_dir = result_dir_name + "/added/"; 
+        safe_mkdir(add_dir);
+
+        // export original node 
+        int origin_index = cur_old_list[i];
+        OldCluster origin_node = old_results_list[origin_index];
+        VectorXd origin_meta_mean = origin_node.meta_mean;
+        MatrixXd origin_meta_cov = origin_node.meta_cov;
+        std::vector<int> origin_sample_index = origin_node.sample_index;
+        int origin_sample_num = origin_sample_index.size();
+        std::vector<int> origin_otus = origin_node.otu_index;
+        mLDMResult origin_result = origin_node.mldm_res;
+        exportCluster(1, origin_result, origin_otus, origin_meta_mean, origin_meta_cov, origin_sample_index, origin_sample_num, const_cast<char*>(origin_dir.c_str()));
+        
+        // export added node 
+        ChildInfo another_node = cur_merge_list[i];
+        exportHierarchicalNodes(1, another_node.node_index, another_node.is_left, add_dir);
+
+        // update dir 
+        result_dir_name = result_dir_name + "/original/";
+    }
+
+    return;
+}
+
 // export the estimated association networks into file
 void KmLDM::exportResult(char* result_dir) {
     // push parent nodes into stack, to find leaf nodes
@@ -1238,6 +1369,11 @@ void KmLDM::exportResult(char* result_dir) {
     MatrixXd leaf_meta_cov;
     int leaf_sample_num;
     int cluster_number = 1;
+    std::string result_dir_name = result_dir;
+    std::string hierarchical_dir = result_dir_name + "/hierarchical_results/";
+    // mkdir 
+    safe_mkdir(hierarchical_dir);
+
 #ifdef VERBOSE
     std::cout << "======================        Export Result        ======================" << std::endl;
 #endif
@@ -1271,6 +1407,14 @@ void KmLDM::exportResult(char* result_dir) {
                 leaf_sample_num = leaf_sample_list.size();
 
                 exportCluster(cluster_number, leaf_result, leaf_otus, leaf_meta_mean, leaf_meta_cov, leaf_sample_list, leaf_sample_num, result_dir);
+                // export hierachical results  
+                std::string number_str = std::to_string(cluster_number);
+                std::string leaf_result_dir = hierarchical_dir + "/cluster-" + number_str + "/";
+                // mkdir 
+                safe_mkdir(leaf_result_dir);
+
+                exportHierarchicalNodes(1, index, true, leaf_result_dir);
+
                 cluster_number += 1;
             }
             // if child2 is leaf
@@ -1284,6 +1428,15 @@ void KmLDM::exportResult(char* result_dir) {
                 leaf_sample_num = leaf_sample_list.size();
 
                 exportCluster(cluster_number, leaf_result, leaf_otus, leaf_meta_mean, leaf_meta_cov, leaf_sample_list, leaf_sample_num, result_dir);
+                // export hierachical results  
+                std::string number_str = std::to_string(cluster_number);
+                std::string leaf_result_dir = hierarchical_dir + "cluster-" + number_str + "/";
+                // mkdir
+                safe_mkdir(leaf_result_dir);
+
+                exportHierarchicalNodes(1, index, false, leaf_result_dir);
+                
+
                 cluster_number += 1;
             }
         }
