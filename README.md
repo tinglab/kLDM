@@ -75,6 +75,52 @@ American Gut project dataset | ./datasets/american-gut-data | 16s rRNA gene sequ
 ## .Biom file processing
 The script './processBiom.py' can be used to filter OTUs and Samples in the .biom file.
 
+## :dart: New Feature -- Saving Intermediate Clustering Process and Visualization
+### Intermediate Merge Process
+Except the final estimated EF-condtions, or clusters, kLDM will also record sub-clusters and the merge process in the directory '{output_directory}/hierarchical_results/'. Every time kLDM will merge clusters from 'added/merged' and 'original/merged' into one cluster, which is saved into new 'merged' directory. The structure of directories is shown as below, 
+```
+|-- results
+      |-- hierarchical_results
+            |-- cluster-1
+            |        |-- added
+            |        |       |-- added
+            |        |       |-- merged
+            |        |       |-- original
+            |        |
+            |        |-- merged
+            |        |       |-- B_1
+            |        |       |-- Meta_Cov_1
+            |        |       |-- Meta_Mean_1
+            |        |       |-- Meta_OTU_Association_1
+            |        |       |-- OTU_Index_1
+            |        |       |-- OTU_OTU_Association_1
+            |        |       |-- Sample_Index_1
+            |        |       |-- Sample_Num_1
+            |        |       |-- Theta_1
+            |        |       
+            |        |-- original
+            |               |-- added
+            |               |-- merged
+            |               |-- original
+            |        
+            |-- cluster-2
+            |-- cluster-3
+            ...
+```
+
+### Hierarchical Server
+In order to visualize all clusters and be convenient for comparing abundance and OTU-OTU and EF-OTU associations among clusters, a web application is developed based python Flask framework and its code is at 'hierarchical_server' directory.
+* Pre-requisites (python packages): flask, argparse, numpy, scipy
+* How to run
+```
+cd ./datasets/
+Rscript ../stateHierarchicalResults.R ./american-gut-data/otu_table ./american-gut-data/meta_table ./american-gut-data/result/ ./american-gut-data/attr_table
+python ../hierarchical_server/hierarchical_server.py --on ./american-gut-data/otu_annotation.txt -mn ./american-gut-data/meta_annotation.txt -an ./american-gut-data/attr_name -ms ./american-gut-data/matrix_shape -res ./american-gut-data/result/ -ot ./american-gut-data/otu_table -mt ./american-gut-data/meta_table -at ./american-gut-data/attr_table
+```
+* Open the browser and enter http://locahost:8087 
+* The result of kLDM on American Gut project has been shown at http://diaglecture.com:8087
+
+![](https://github.com/tinglab/kLDM/blob/master/pictures/hierarchical_server.png)
 
 ## Contact
 If you have any question, please send email to **Yuqing Yang** (yyq410@163.com).
