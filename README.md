@@ -13,6 +13,7 @@ kLDM assumes that interactions among microbes are regulated by environmental fac
 
 ## Installation
 Just compile source and the executable file 'run' will be generated.
+- The Eigen library for linear algebra was put into the directory '../eigen', which will be used during the compiling process ~
 ```
 cd ./src
 make
