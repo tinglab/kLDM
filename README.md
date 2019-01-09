@@ -21,7 +21,7 @@ sudo yum install lapack lapack-devel blas blas-devel
 Using the kLDM in Linux OS servers is relatively easy.
 ### Linux OS
 Just compile source and the executable file 'run' will be generated.
-- The Eigen library for linear algebra was put into the directory '../eigen', which will be used during the compiling process ~ If the Eigen library has been installed into the computer, You can change the Makefile to use own Eigen.
+- The Eigen library for linear algebra was put into the directory 'kLDM/eigen', which will be used during the compiling process ~ If the Eigen library has been installed into the computer, You can change the Makefile to use own Eigen.
 ```
 # compile kLDM
 cd ./src
