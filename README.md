@@ -9,19 +9,19 @@ kLDM assumes that interactions among microbes are regulated by environmental fac
 - gcc >= 4.8 (support c++11 and openmp)
 - make
 - lapack, blas library
+```
+# centos
+sudo yum install lapack lapack-devel blas blas-devel
+# or ubuntu
+# sudo apt-get install libblas-dev
+# sudo apt-get install liblapack-dev
+```
 
 ## Installation
 ### Linux OS
 Just compile source and the executable file 'run' will be generated.
 - The Eigen library for linear algebra was put into the directory '../eigen', which will be used during the compiling process ~ If the Eigen library has been installed into the computer, You can change the Makefile to use own Eigen.
 ```
-# install pre-requisites
-# centos
-sudo yum install lapack lapack-devel blas blas-devel
-# or ubuntu
-# sudo apt-get install libblas-dev
-# sudo apt-get install liblapack-dev
-
 # compile kLDM
 cd ./src
 make
