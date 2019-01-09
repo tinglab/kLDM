@@ -6,8 +6,7 @@ kLDM is designed to infer multiple association networks based on variation of en
 kLDM assumes that interactions among microbes are regulated by environmental factors and they tend to be stable when environmental conditions are identical but may change with variation in values of environmental factors. Under the same environmental condition, values of environmental factors are fluctuant in a small range, while core microbes are the same, and associations within microbial community are stable. Between different environmental conditions, values of environmental factors, species of microbes and their associations can be different.
 
 ## Pre-requisites
-- C++ 11
-- Openmp
+- gcc >= 4.8 (support c++11 and openmp)
 - make
 - lapack, blas library
 
